@@ -1,0 +1,18 @@
+spring:
+  profiles:
+    include: mysql
+
+  thymeleaf:
+    cache: false
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+
+logging:
+  level:
+    sql: debug
+    org.hibernate.orm.jdbc.bind: trace

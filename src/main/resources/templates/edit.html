@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>게시글 수정</title>
+</head>
+<body>
+<h2>게시글 수정</h2>
+<form th:action="@{/post/{id}/edit(id=${postForm.id})}" method="post" th:object="${postForm}">
+  <label th:for="title">제목</label>
+  <input type="text" th:field="*{title}" required>
+
+  <label th:for="content">내용</label>
+  <textarea th:field="*{content}" required></textarea>
+  <button type="submit">완료</button>
+</form>
+</body>
+</html>
