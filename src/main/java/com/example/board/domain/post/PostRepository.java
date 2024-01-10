@@ -1,4 +1,4 @@
-package com.example.board;
+package com.example.board.domain.post;
 
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;

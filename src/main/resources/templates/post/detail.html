@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout.html}">
+<head>
+    <title>게시글 상세 보기</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container" th:object="${postForm}">
+        <h1 class="display-6 border-bottom mb-3" th:text="*{title}"></h1>
+        <p class="border-bottom mb-3" th:text="*{content}"></p>
+        <div th:if="*{fileAttached == 1}" th:each="fileName: *{storedFileName}">
+            <img th:src="@{|/upload/${fileName}|}" class="img-fluid" alt="...">
+        </div>
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            <a class="btn btn-primary" th:href="@{/post/{id}/edit(id=*{id})}" role="button">수정</a>
+            <a class="btn btn-primary" th:href="@{/{id}(id=*{id})}" role="button">삭제</a>
+            <a class="btn btn-primary" th:href="@{/posts}" role="button">목록</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,4 +1,4 @@
-package com.example.board;
+package com.example.board.domain.post;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @Controller
@@ -17,11 +18,11 @@ public class PostController {
 
     @GetMapping("/post")
     public String writePost() {
-        return "write";
+        return "post/write";
     }
 
     @PostMapping("/post")
-    public String savePost(@ModelAttribute PostForm postForm) {
+    public String savePost(@ModelAttribute PostForm postForm) throws IOException {
         log.info("postForm={}", postForm);
 
         postService.savePost(postForm);
@@ -32,7 +33,7 @@ public class PostController {
     public String editForm(@PathVariable Long id, Model model) {
         PostForm postForm = postService.findPostById(id);
         model.addAttribute("postForm", postForm);
-        return "edit";
+        return "post/edit";
     }
 
     @PostMapping("/post/{id}/edit")
@@ -46,14 +47,14 @@ public class PostController {
     public String findAllPosts(Model model) {
         List<PostForm> posts = postService.findAllPosts();
         model.addAttribute("posts", posts);
-        return "list";
+        return "post/list";
     }
 
     @GetMapping("/post/{id}")
     public String findPostByID(@PathVariable Long id, Model model) {
         PostForm postForm = postService.findPostById(id);
         model.addAttribute("postForm", postForm);
-        return "detail";
+        return "post/detail";
     }
 
     @GetMapping("/{id}")

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout.html}">
+<head>
+    <title>목록</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">번호</th>
+            <th scope="col">제목</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="post : ${posts}">
+            <td th:text="${post.id}"></td>
+            <td>
+                <a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
+                   th:href="@{/post/{id}(id=${post.id})}" th:text="${post.title}">
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <a class="btn btn-primary" href="/post" role="button">글쓰기</a>
+</div>
+</body>
+</html>
