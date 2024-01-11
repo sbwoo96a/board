@@ -1,5 +1,8 @@
 package com.example.board.domain.post;
 
+import com.example.board.domain.comment.CommentDTO;
+import com.example.board.domain.comment.CommentRepository;
+import com.example.board.domain.comment.CommentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -18,6 +21,7 @@ import java.util.List;
 public class PostController {
 
     private final PostService postService;
+    private final CommentService commentService;
 
     @GetMapping("/post")
     public String writePost() {
@@ -56,7 +60,10 @@ public class PostController {
     @GetMapping("/post/{id}")
     public String findPostByID(@PathVariable Long id, Model model) {
         PostForm postForm = postService.findPostById(id);
+        List<CommentDTO> comments = commentService.commentList(id);
+        log.info("comments={}", comments);
         model.addAttribute("postForm", postForm);
+        model.addAttribute("comments", comments);
         return "post/detail";
     }
 
@@ -70,7 +77,21 @@ public class PostController {
     public String paging(@PageableDefault(page = 1) Pageable pageable, Model model) {
         Page<PostForm> postForms = postService.paging(pageable);
         int blockLimit = 5;
-        int startPage = ((int)(Math.ceil((double)pageable.getPageNumber() / blockLimit)) - 1) * blockLimit + 1;
+        int startPage = ((int) (Math.ceil((double) pageable.getPageNumber() / blockLimit)) - 1) * blockLimit + 1;
+        int endPage = ((startPage + blockLimit - 1) < postForms.getTotalPages()) ? startPage + blockLimit - 1 : postForms.getTotalPages();
+
+        model.addAttribute("posts", postForms);
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("endPage", endPage);
+
+        return "post/list";
+    }
+
+    @GetMapping("/search")
+    public String search(@PageableDefault(page = 1) Pageable pageable, Model model, @RequestParam String keyword) {
+        Page<PostForm> postForms = postService.searchPost(pageable, keyword);
+        int blockLimit = 5;
+        int startPage = ((int) (Math.ceil((double) pageable.getPageNumber() / blockLimit)) - 1) * blockLimit + 1;
         int endPage = ((startPage + blockLimit - 1) < postForms.getTotalPages()) ? startPage + blockLimit - 1 : postForms.getTotalPages();
 
         model.addAttribute("posts", postForms);

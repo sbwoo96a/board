@@ -1,5 +1,6 @@
 package com.example.board.domain.post;
 
+import com.example.board.domain.comment.Comment;
 import com.example.board.domain.file.PostFile;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -27,6 +28,10 @@ public class Post {
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<PostFile> postFiles = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @OrderBy("id asc")
+    private List<Comment> comments;
 
     @Builder
     public Post(String title, String content, int fileAttached) {

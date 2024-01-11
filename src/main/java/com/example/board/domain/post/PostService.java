@@ -96,12 +96,21 @@ public class PostService {
         postRepository.deleteById(id);
     }
 
+    //페이징
     public Page<PostForm> paging(Pageable pageable) {
         int page = pageable.getPageNumber() - 1;
         int pageLimit = 10;
         Page<Post> posts = postRepository.findAll(PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC, "id")));
 
-        Page<PostForm> postForms = posts.map(board -> new PostForm(board.getId(), board.getTitle()));
-        return postForms;
+        return posts.map(board -> new PostForm(board.getId(), board.getTitle()));
+    }
+
+    public Page<PostForm> searchPost(Pageable pageable, String keyword) {
+
+        int page = pageable.getPageNumber() - 1;
+        int pageLimit = 10;
+        Page<Post> posts = postRepository.findByTitleContaining(keyword, PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC, "id")));
+
+        return posts.map(board -> new PostForm(board.getId(), board.getTitle()));
     }
 }
