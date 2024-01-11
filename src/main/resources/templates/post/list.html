@@ -7,25 +7,49 @@
 </head>
 <body>
 <div layout:fragment="content">
-    <table class="table table-striped">
-        <thead>
-        <tr>
-            <th scope="col">번호</th>
-            <th scope="col">제목</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="post : ${posts}">
-            <td th:text="${post.id}"></td>
-            <td>
-                <a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
-                   th:href="@{/post/{id}(id=${post.id})}" th:text="${post.title}">
-                </a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-    <a class="btn btn-primary" href="/post" role="button">글쓰기</a>
+    <div class="container">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">번호</th>
+                <th scope="col">제목</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="post : ${posts}">
+                <td th:text="${post.id}"></td>
+                <td>
+                    <a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
+                       th:href="@{|/post/${post.id}|(page=${posts.number + 1})}" th:text="${post.title}">
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">
+                <li class="page-item">
+                    <a class="page-link" th:href="@{/paging(page=1)}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <ul class="justify-content-center" th:each="page: ${#numbers.sequence(startPage, endPage)}">
+                    <li th:if="${page == posts.number + 1}" th:classappend="active" th:class="page-item">
+                        <a class="page-link" href="#" th:text="${page}"></a>
+                    </li>
+                    <li th:unless="${page == posts.number + 1}" th:class="page-item">
+                        <a class="page-link" th:href="@{/paging(page=${page})}" th:text="${page}"></a>
+                    </li>
+                </ul>
+                <li class="page-item">
+                    <a class="page-link" th:href="${posts.last}?'#':@{/paging(page=${posts.number + 2})}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <a class="btn btn-primary" href="/post" role="button">글쓰기</a>
+    </div>
 </div>
 </body>
 </html>

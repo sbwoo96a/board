@@ -4,6 +4,10 @@ import com.example.board.domain.file.PostFile;
 import com.example.board.domain.file.PostFileRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,7 +23,7 @@ import java.util.List;
 @Slf4j
 public class PostService {
 
-    private final PostRepository postRepository;
+    private final PostRepositoryV2 postRepository;
     private final PostFileRepository postFileRepository;
 
     //게시글 저장
@@ -43,8 +47,8 @@ public class PostService {
               7. file_table에 해당 데이터 save 처리
              */
             Post post = Post.toPostFileEntity(form);
-            postRepository.save(post);
-            Post findPost = postRepository.findById(post.getId());
+            Post savePost = postRepository.save(post);
+            Post findPost = postRepository.findById(savePost.getId()).get();
 
             for (MultipartFile formFile : form.getFormFile()) {
 //            MultipartFile formFile = form.getFormFile();   //1.
@@ -64,14 +68,14 @@ public class PostService {
     //게시글 수정
     @Transactional
     public Long updatePost(PostForm form) {
-        Post findPost = postRepository.findById(form.getId());
+        Post findPost = postRepository.findById(form.getId()).get();
         findPost.updatePost(form);
         return findPost.getId();
     }
 
     //게시글 상세 조회
     public PostForm findPostById(Long id) {
-        Post findPost = postRepository.findById(id);
+        Post findPost = postRepository.findById(id).get();
         return PostForm.toPostForm(findPost);
     }
 
@@ -89,6 +93,15 @@ public class PostService {
     //게시글 삭제
     @Transactional
     public void deletePost(Long id) {
-        postRepository.delete(id);
+        postRepository.deleteById(id);
+    }
+
+    public Page<PostForm> paging(Pageable pageable) {
+        int page = pageable.getPageNumber() - 1;
+        int pageLimit = 10;
+        Page<Post> posts = postRepository.findAll(PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC, "id")));
+
+        Page<PostForm> postForms = posts.map(board -> new PostForm(board.getId(), board.getTitle()));
+        return postForms;
     }
 }

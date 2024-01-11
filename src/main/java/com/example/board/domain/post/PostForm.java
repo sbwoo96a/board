@@ -10,6 +10,7 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostForm {
 
     private Long id;
@@ -20,6 +21,11 @@ public class PostForm {
     private List<String> originalFileName; //원본 파일 이름
     private List<String> storedFileName;  //서버 저장용 파일 이름
     private int fileAttached;   //파일 첨부 여부(첨부 1, 미첨부 0)
+
+    public PostForm(Long id, String title) {
+        this.id = id;
+        this.title = title;
+    }
 
     public static PostForm toPostForm(Post post) {
         PostForm postForm = new PostForm();
