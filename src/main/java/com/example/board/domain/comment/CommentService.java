@@ -1,50 +1,81 @@
 package com.example.board.domain.comment;
 
-import com.example.board.domain.post.Post;
-import com.example.board.domain.post.PostRepositoryV2;
+import com.example.board.domain.board.Board;
+import com.example.board.domain.board.BoardJpaRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class CommentService {
 
-    private final PostRepositoryV2 postRepository;
+    private final BoardJpaRepository boardJpaRepository;
     private final CommentRepository commentRepository;
 
     //댓글 작성
     @Transactional
-    public Long writeComment(CommentDTO request, Long postId) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("게시물을 찾을 수 없습니다"));
-        Comment comment = new Comment();
-        comment.setPost(post);
-        comment.setContent(request.getContent());
+    public Long writeComment(CommentDTO commentDTO) {
+        Board findBoard = boardJpaRepository.findById(commentDTO.getBoardId());
+        Comment comment = Comment.toCommentEntity(commentDTO);
 
-        commentRepository.save(comment);
-        return comment.getId();
+        if (commentDTO.getParentId() == null) {
+            comment.createComment(findBoard);
+        } else {
+            Comment parentComment = commentRepository.findById(commentDTO.getParentId());
+            comment.createReply(findBoard, parentComment);
+        }
+
+        return commentRepository.save(comment);
     }
 
-    //댓글 목록 가져 오기
-    public List<CommentDTO> commentList(Long id) {
-        Post post = postRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("게시물을 찾을 수 없습니다."));
+    //댓글 목록 가져오기
+    public List<CommentDTO> findComments(Long boardId) {
+        Board board = boardJpaRepository.findById(boardId);
+        List<Comment> parents = commentRepository.findByParentCommentIsNull(board);
+        log.info("부모 댓글들={}", parents);
 
-        List<Comment> comments = commentRepository.findByPost(post);
+        List<CommentDTO> comments = new ArrayList<>();
 
-        return comments.stream().map(comment ->
-                new CommentDTO(comment.getId(), comment.getContent())).collect(Collectors.toList());
+        for (Comment parent : parents) {
+            comments.add(CommentDTO.toCommentDTO(parent, boardId));
+            if(!parent.getChild().isEmpty()) {
+                buildCommentHierarchy(comments, parent, boardId);
+            }
+        }
 
+        return comments;
     }
+
+    private void buildCommentHierarchy(List<CommentDTO> comments, Comment parent, Long boardId) {
+        for (Comment child : parent.getChild()) {
+            if(!child.isDeleteYn()) {
+                comments.add(CommentDTO.toCommentDTO(child, boardId));
+                if (!child.getChild().isEmpty()) {
+                    buildCommentHierarchy(comments, child, boardId);
+                }
+            }
+        }
+    }
+
 
     //댓글 수정
+    @Transactional
+    public void updateComment(CommentDTO commentDTO) {
+        Comment findComment = commentRepository.findById(commentDTO.getId());
+        findComment.updateComment(commentDTO.getCommentContent());
+    }
+
     //댓글 삭제
     @Transactional
     public void deleteComment(Long commentId) {
-        commentRepository.deleteById(commentId);
+        Comment findComment = commentRepository.findById(commentId);
+        findComment.deleteComment();
     }
-
 }

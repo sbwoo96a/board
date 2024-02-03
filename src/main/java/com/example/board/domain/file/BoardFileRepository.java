@@ -6,11 +6,11 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-public class PostFileRepository {
+public class BoardFileRepository {
 
     private final EntityManager em;
 
-    public void save(PostFile postFile) {
-        em.persist(postFile);
+    public void save(BoardFile boardFile) {
+        em.persist(boardFile);
     }
 }

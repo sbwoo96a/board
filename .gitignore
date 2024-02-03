@@ -25,7 +25,6 @@ bin/
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
-application-mysql.yml
 
 ### NetBeans ###
 /nbproject/private/
@@ -36,3 +35,9 @@ application-mysql.yml
 
 ### VS Code ###
 .vscode/
+
+### Mysql ###
+application-mysql.yml
+
+### S3 ###
+application-s3.yml

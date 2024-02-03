@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout.html}">
+<head>
+    <title>글쓰기</title>
+    <script src="https://cdn.ckeditor.com/ckeditor5/40.2.0/classic/ckeditor.js"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/40.2.0/classic/ckeditor.js/translations/ko.js"></script>
+    <style>
+        .ck-editor__editable:not(.ck-editor__nested-editable) {
+            height: 450px;
+        }
+    </style>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container">
+        <form id="boardForm" action="/board" method="post">
+            <div class="mb-3">
+                <label for="boardTitle" class="form-label">제목</label>
+                <input type="text" class="form-control" id="boardTitle" name="boardTitle" placeholder="제목" required>
+                <label for="boardContent">내용</label>
+                <textarea id="boardContent" name="boardContent"></textarea>
+            </div>
+            <div class="d-grid gap-2 d-md-block">
+                <button class="btn btn-primary" type="submit">완료</button>
+                <a class="btn btn-primary" role="button" href="/boards">취소</a>
+            </div>
+        </form>
+    </div>
+</div>
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+       ClassicEditor.create(document.querySelector('#boardContent'), {
+           language: "ko",
+           ckfinder: {
+               uploadUrl: "/image/upload",
+               withCredentials: true
+           }
+       });
+    </script>
+</th:block>
+</body>
+</html>

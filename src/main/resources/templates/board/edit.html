@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout.html}">
+<head>
+    <title>게시글 수정</title>
+    <script src="https://cdn.ckeditor.com/ckeditor5/40.2.0/classic/ckeditor.js"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/40.2.0/classic/ckeditor.js/translations/ko.js"></script>
+    <style>
+        .ck-editor__editable:not(.ck-editor__nested-editable) {
+            height: 450px;
+        }
+    </style>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container">
+        <form th:action="|/board/${boardResponse.id}/edit|" method="post" th:object="${boardResponse}">
+            <div class="mb-3">
+                <label th:for="boardTitle" class="form-label">제목</label>
+                <input type="text" class="form-control" th:field="*{boardTitle}" required>
+                <label th:for="boardWriter" class="form-label">작성자</label>
+                <input type="text" class="form-control" th:field="*{boardWriter}" required>
+                <label th:for="boardContent">내용</label>
+                <textarea id="boardContent" name="boardContent" th:field="*{boardContent}"></textarea>
+            </div>
+            <div class="d-grid gap-2 d-md-block">
+                <button class="btn btn-primary" type="submit">완료</button>
+                <a class="btn btn-primary" role="button" href="/boards">취소</a>
+            </div>
+        </form>
+    </div>
+</div>
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        ClassicEditor.create(document.querySelector('#boardContent'), {
+            language: "ko",
+            ckfinder: {
+                uploadUrl: "/image/upload",
+                withCredentials: true
+            }
+        });
+    </script>
+</th:block>
+</body>
+</html>

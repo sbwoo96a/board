@@ -1,23 +1,39 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <body>
 <div th:fragment="header">
     <nav class="py-2 bg-body-tertiary border-bottom">
-        <div class="container d-flex flex-wrap">
+        <div th:if="${session.loginMember == null}" class="container d-flex flex-wrap">
             <ul class="nav">
-                <li class="nav-item"><a href="#" class="nav-link link-body-emphasis px-2">로그인</a></li>
-                <li class="nav-item"><a href="#" class="nav-link link-body-emphasis px-2">회원가입</a></li>
+                <li class="nav-item"><a href="/login" class="nav-link link-body-emphasis px-2">로그인</a></li>
+                <li class="nav-item"><a href="/signup" class="nav-link link-body-emphasis px-2">회원가입</a></li>
+            </ul>
+        </div>
+        <div th:if="${session.loginMember != null}" class="container d-flex flex-wrap">
+            <ul class="nav">
+                <li class="nav-item"><a href="#" class="nav-link link-body-emphasis px-2"
+                                        th:text="${session.loginMember}"></a></li>
+                <li class="nav-item"><a href="/logout" class="nav-link link-body-emphasis px-2" id="logout">로그아웃</a>
+                </li>
             </ul>
         </div>
     </nav>
     <header class="py-3 mb-4 border-bottom">
         <div class="container d-flex flex-wrap justify-content-center">
-            <a href="/posts"
+            <a href="/boards"
                class="d-flex align-items-center mb-3 mb-lg-0 me-lg-auto link-body-emphasis text-decoration-none">
                 <span class="fs-4">스프링 MVC 게시판</span>
             </a>
-            <form class="col-12 col-lg-auto mb-3 mb-lg-0" role="search" action="/search" method="get">
-                <input type="search" class="form-control" aria-label="Search" name="keyword">
+            <label for="dropdownSelector">
+                <select class="form-select" id="dropdownSelector">
+                    <option value="title" th:selected="${searchBy == 'title'}">제목</option>
+                    <option value="content" th:selected="${searchBy == 'content'}">내용</option>
+                    <option value="author" th:selected="${searchBy == 'author'}">작성자</option>
+                </select>
+            </label>
+            <form id="searchForm" class="col-12 col-lg-auto mb-3 mb-lg-0 ms-3" role="search" action="/boards" method="get">
+                <input type="search" class="form-control" aria-label="Search" name="keyword" th:value="${keyword}">
             </form>
         </div>
     </header>

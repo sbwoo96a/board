@@ -1,13 +1,15 @@
 spring:
   profiles:
-    include: mysql
+    include:
+      - mysql
+      - s3
 
   thymeleaf:
     cache: false
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     properties:
       hibernate:
         format_sql: true
@@ -16,3 +18,9 @@ logging:
   level:
     sql: debug
     org.hibernate.orm.jdbc.bind: trace
+
+server:
+  servlet:
+    session:
+      tracking-modes: cookie
+      timeout: 1800

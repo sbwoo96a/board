@@ -6,12 +6,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title layout:title-pattern="$LAYOUT_TITLE - $CONTENT_TITLE">스프링 MVC 게시판</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
-    <th:block layout:fragment="add-script"></th:block>
 </head>
 <body>
 <div th:replace="~{fragment/header::header}"></div>
 <div layout:fragment="content"></div>
 <div th:replace="~{fragment/footer::footer}"></div>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js" integrity="sha384-Rx+T1VzGupg4BHQYs2gCW9It+akI2MM/mndMCy36UVfodzcJcF0GGLxZIzObiEfa" crossorigin="anonymous"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Intercept the form submission event
+        document.getElementById('searchForm').addEventListener('submit', function (event) {
+            // Prevent the default form submission
+            event.preventDefault();
+
+            // Get the selected value from the dropdown
+            const selectedValue = document.getElementById('dropdownSelector').value;
+
+            // Get the search keyword from the input field
+            const keyword = document.querySelector('[name="keyword"]').value;
+
+            // Construct the URL with the selected value and keyword
+            const url = '/boards?searchBy=' + selectedValue + '&keyword=' + encodeURIComponent(keyword);
+
+            // Redirect to the generated URL
+            window.location.href = url;
+        });
+    });
+
+
+
+</script>
 <th:block layout:fragment="script"></th:block>
 </body>
 </html>
